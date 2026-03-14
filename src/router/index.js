@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -23,18 +22,17 @@ const router = createRouter({
         path: '/reserva',
          name: 'reserva',
         component: () => import('../views/VistaReservaU.vue'),
-      
+
     },
       {
           path: '/agregar',
           name: 'agregar',
          component: () => import('../views/AgregarUsuario.vue'),
       }
-  
+
   ]
 });
 
 export default router
 
 
- 
