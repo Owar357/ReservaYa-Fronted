@@ -4,7 +4,7 @@
       class="flex rounded-2xl overflow-hidden shadow-2xl bg-white"
       style="width: 700px; max-width: 95vw; min-height: 460px"
     >
-      <!-- IMAGEN (lado izquierdo) -->
+
       <div class="hidden md:block" style="width: 45%">
         <img
           src="https://imgs.search.brave.com/dorzZFV7ZF93QFJ2wnMMpQgpZrOrofxw6j57IOE43ms/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9xLXh4/LmJzdGF0aWMuY29t/L3hkYXRhL2ltYWdl/cy9ob3RlbC9tYXg2/MDAvMzYyMDMyMTEw/LmpwZz9rPWRhOGM2/MTVlMTU3ZTJlOTRj/ZWU1ZDdiYWFlNTNh/ZDgzNDA3MzQ1OTY1/MGYxNjU2ZTViYTNk/MzlmMzJjMTVhMWEm/bz0mYT0xMzExMTE5 "
@@ -13,7 +13,7 @@
         />
       </div>
 
-      <!-- FORMULARIO (lado derecho) -->
+
       <div class="flex-1 flex flex-col justify-center px-10 py-12">
         <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Iniciar Sesión</h2>
 
