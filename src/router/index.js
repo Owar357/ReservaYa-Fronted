@@ -1,8 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Login from '@/views/AuthViews/Login.vue'
-import Register from '@/views/AuthViews/Register.vue'
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
 
 
 
@@ -42,21 +38,25 @@ const router = createRouter({
      
 
     {
-        path: '/reserva',
-         name: 'reserva',
-        component: () => import('../views/VistaReservaU.vue'),
-      
+      path: '/reserva',
+      name: 'reserva',
+      component: () => import('../views/VistaReservaU.vue'),
+
+    },
+    {
+      path: '/agregar',
+      name: 'agregar',
+      component: () => import('../views/AgregarUsuario.vue'),
     },
       {
-          path: '/agregar',
-          name: 'agregar',
-         component: () => import('../views/AgregarUsuario.vue'),
-      }
-  
+      path: '/usuarios',
+      name: 'usuarios',
+      component: () => import('../views/ListaUsuarios.vue'),
+    }
+
   ]
 });
 
 export default router
 
 
- 

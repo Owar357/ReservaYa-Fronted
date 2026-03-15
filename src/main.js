@@ -8,10 +8,11 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import setupPrimeVue from './utils/primevue'
 
 // 1. IMPORTAR ESTILOS DE Tailwind
-import './assets/main.css' 
+import './assets/main.css'
 
 // 2. ESTILOS DE PRIMEVUE
 import 'primevue/resources/themes/saga-blue/theme.css'
+import 'sweetalert2/dist/sweetalert2.min.css'
 import 'primevue/resources/primevue.css'
 import 'primeicons/primeicons.css'
 
