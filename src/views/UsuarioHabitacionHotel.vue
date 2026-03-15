@@ -1,83 +1,56 @@
-```vue
 <template>
-  <div class="hotel-page">
 
-    
-    <div class="hotel-hero">
-      <img
-        src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80"
-        alt="Hotel Las Primaveras"
-        class="hotel-img"
-      />
+  <div>
+    <NavBar />
 
-      <div class="hotel-info">
-        <h1 class="hotel-name">{{ hotel.nombre }}</h1>
-        <p class="hotel-location">{{ hotel.ubicacion }}</p>
+    <div class="hotel-page">
 
-        <p class="hotel-desc">
-          {{ hotel.descripcion }}
-        </p>
+      <div class="hotel-hero">
+        <img :src="store.hotel?.imagen" :alt="store.hotel?.nombre" class="hotel-img" />
+
+        <div class="hotel-info">
+          <h1 class="hotel-name">{{ store.hotel?.nombre }}</h1>
+          <p class="hotel-location">{{ store.hotel?.departamento }}</p>
+          <p class="hotel-desc">{{ store.hotel?.descripcion }}</p>
+        </div>
       </div>
+
+      <h2 class="section-title">Elige Tu Habitación</h2>
+
+      <div class="rooms-grid">
+        <HabitacionCard v-for="habitacion in store.habitaciones" :key="habitacion.id" :nombre="habitacion.nombre"
+          :tipo="habitacion.tipo_habitacion?.nombre" :numero="habitacion.num_habitacion"
+          :capacidad="habitacion.capacidad" :precio="habitacion.precio" :imagenes="habitacion.imagenes" />
+      </div>
+
     </div>
-
-    <h2 class="section-title">Elige Tu Habitación</h2>
-
-    <div class="rooms-grid">
-      <HabitacionCard
-        v-for="habitacion in habitaciones"
-        :key="habitacion.numero"
-        :nombre="habitacion.nombre"
-        :tipo="habitacion.tipo"
-        :numero="habitacion.numero"
-        :capacidad="habitacion.capacidad"
-        :precio="habitacion.precio"
-        :imagen="habitacion.imagen"
-      />
-    </div>
-
   </div>
+
+
+
+
+
+
 </template>
 
 <script setup>
-import HabitacionCard from '../components/HabitacionCard.vue'
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { useHabitacionStore } from '@/stores/habitacionesHotelStore'
+import HabitacionCard from '@/components/home/HabitacionCard.vue'
+import NavBar from '@/components/home/NavBar.vue'
 
-const hotel = {
-  nombre: "Hotel Las Primaveras 1",
-  ubicacion: "Chalatenango",
-  descripcion:
-    "Disfruta de una desconexión total en nuestras áreas lounge, donde el diseño náutico y brisa marina crean el refugio perfecto para tus vacaciones de verano"
-}
+const route = useRoute()
+const store = useHabitacionStore()
 
-const habitaciones = [
-  {
-    nombre: "Cuarto Habitación Vista Beach Palm",
-    tipo: "Size",
-    numero: 2,
-    capacidad: 3,
-    precio: 150.00,
-    imagen: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=80"
-  },
-  {
-    nombre: "Amanecer Dorado",
-    tipo: "Single",
-    numero: 1,
-    capacidad: 1,
-    precio: 70.00,
-    imagen: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=400&q=80"
-  },
-  {
-    nombre: "Sombra de Palma",
-    tipo: "Hollywood Twin",
-    numero: 3,
-    capacidad: 2,
-    precio: 125.00,
-    imagen: "https://images.unsplash.com/photo-1591088398332-8a7791972843?w=400&q=80"
-  }
-]
+onMounted(() => {
+  store.fetchHabitaciones(route.params.id)
+})
 </script>
 
-<style scoped>
 
+
+<style scoped>
 .hotel-page {
   font-family: Arial, sans-serif;
   max-width: 960px;
@@ -95,7 +68,7 @@ const habitaciones = [
   background: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .hotel-img {
@@ -155,6 +128,4 @@ const habitaciones = [
   }
 
 }
-
 </style>
-
