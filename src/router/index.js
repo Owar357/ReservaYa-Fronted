@@ -1,34 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Login from '@/views/AuthViews/Login.vue'
-import Register from '@/views/AuthViews/Register.vue'
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/login',
-      name: 'login',
-      component: Login,
-    },
-    {
-      path: '/AdminEstadisticas',
-      name: 'AdminEstadisticas',
-      component: AdminEstadisticas
-    },
-
-    {
-      path: '/register',
-      name: 'register',
-      component: Register,
-    },
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
     {
       path: '/about',
       name: 'about',
@@ -37,28 +12,32 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
-     {
-         path: '/hoteles',
-         name: 'hoteles',
-        component: () => import('../views/Index.vue'),
+    {
+      path: '/hoteles',
+      name: 'hoteles',
+      component: () => import('../views/Index.vue'),
     },
 
     {
-        path: '/reserva',
-         name: 'reserva',
-        component: () => import('../views/VistaReservaU.vue'),
-      
+      path: '/reserva',
+      name: 'reserva',
+      component: () => import('../views/VistaReservaU.vue'),
+
+    },
+    {
+      path: '/agregar',
+      name: 'agregar',
+      component: () => import('../views/AgregarUsuario.vue'),
     },
       {
-          path: '/agregar',
-          name: 'agregar',
-         component: () => import('../views/AgregarUsuario.vue'),
-      }
-  
+      path: '/usuarios',
+      name: 'usuarios',
+      component: () => import('../views/ListaUsuarios.vue'),
+    }
+
   ]
 });
 
 export default router
 
 
- 
