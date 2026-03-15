@@ -12,23 +12,28 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
-     {
-         path: '/hoteles',
-         name: 'hoteles',
-        component: () => import('../views/Index.vue'),
+    {
+      path: '/hoteles',
+      name: 'hoteles',
+      component: () => import('../views/Index.vue'),
     },
 
     {
-        path: '/reserva',
-         name: 'reserva',
-        component: () => import('../views/VistaReservaU.vue'),
+      path: '/reserva',
+      name: 'reserva',
+      component: () => import('../views/VistaReservaU.vue'),
 
     },
+    {
+      path: '/agregar',
+      name: 'agregar',
+      component: () => import('../views/AgregarUsuario.vue'),
+    },
       {
-          path: '/agregar',
-          name: 'agregar',
-         component: () => import('../views/AgregarUsuario.vue'),
-      }
+      path: '/usuarios',
+      name: 'usuarios',
+      component: () => import('../views/ListaUsuarios.vue'),
+    }
 
   ]
 });
