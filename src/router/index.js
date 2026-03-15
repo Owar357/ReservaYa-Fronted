@@ -1,4 +1,9 @@
+import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
+import Login from '@/views/AuthViews/Login.vue';
+import Register from '@/views/AuthViews/Register.vue';
+import HomeView from '@/views/HomeView.vue';
 import { createRouter, createWebHistory } from 'vue-router'
+import ListaUsuarios from '../views/ListaUsuarios.vue';
 
 
 
@@ -15,13 +20,20 @@ const router = createRouter({
       name: 'AdminEstadisticas',
       component: AdminEstadisticas
     },
-
+    
     
     {
       path: '/register',
       name: 'register',
       component: Register,
     },
+
+      {
+      path: '/crudUsuarios',
+      name: 'crudUsuarios',
+      component: ListaUsuarios,
+    }, 
+
     {
       path: '/',
       name: 'home',
