@@ -1,7 +1,7 @@
 <template>
     <div class="flex-1 flex flex-col gap-3">
         <div v-for="(hotel, index) in hotels" :key="hotel.id"
-            class="flex items-center p-4 gap-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-[#d2e8ee] transition cursor-pointer">
+            class="flex items-center p-4 gap-4 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-[#d2e8ee] hover:shadow-xl hover:scale-[1.02] transition-all duration-300 cursor-pointer">
 
             <div class="w-36 h-24 rounded-lg overflow-hidden flex-shrink-0">
                 <img :src="hotel.imagen" :alt="hotel.nombre" class="w-full h-full object-cover" />

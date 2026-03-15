@@ -18,22 +18,22 @@ export const useAuthStore = defineStore("auth", {
     isAuthenticated: (state) => !!state.token, //* una propiedad calculada. Y state es el parámetro  que pasa datos al store
 
     isUsuario: (state) => {
-      return state.user?.roles?.some((role) => role.name === "USUARIO"); //* busca en el array de roles para ver si existe uno igual al puesto aca y devuelve true o false segun el caso
+      return state.user?.roles?.some((role) => role === "USUARIO"); //* busca en el array de roles para ver si existe uno igual al puesto aca y devuelve true o false segun el caso
     },
 
-    isUsuarioAdmin: (state) => {
-      return state.user?.roles?.some((role) => role.name === "USUARIOADMIN");
+      isUsuarioAdmin: (state) => {
+        return state.user?.roles?.some((role) => role === "USUARIOADMIN");
     },
 
     isPropietario: (state) => {
-      return state.user?.roles?.some((role) => role.name === "PROPIETARIO");
+      return state.user?.roles?.some((role) => role === "PROPIETARIO");
     },
 
     isGerente: (state) => {
-      return state.user?.roles?.some((role) => role.name === "GERENTE");
+      return state.user?.roles?.some((role) => role === "GERENTE");
     },
     isRecepcionista: (state) => {
-      return state.user?.roles?.some((role) => role.name === "RECEPCIONISTA");
+      return state.user?.roles?.some((role) => role === "RECEPCIONISTA");
     },
   },
 

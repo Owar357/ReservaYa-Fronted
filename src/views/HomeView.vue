@@ -12,24 +12,28 @@
         <h1 class="text-center text-2xl font-bold mb-6">
           Reserva con confianza, viaja con tranquilidad.
         </h1>
-        <HotelListGrid :hotels="filteredHotels" @toggleFavorite="toggleFavorite" @verHabitaciones="verHabitaciones" />
+        <div v-if="homestore.loading" class="text-center py-20 flex-1">
+          Cargando Hoteles...
+        </div>
+        <HotelListGrid  v-else="homestore.loading" :hotels="filteredHotels" @toggleFavorite="toggleFavorite" @verHabitaciones="verHabitaciones" />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed , onMounted} from 'vue'
 import HotelSidebar from '@/components/home/HotelSidebar.vue'
 import NavBar from '@/components/home/NavBar.vue'
 import HotelListGrid from '@/components/home/HotelListGrid.vue'
+import { useHomeStore } from '@/stores/homeStore'
 
+const homestore = useHomeStore()
 const selected = ref({})
 
-const hotels = ref([
-  { id: 1, nombre: 'Hotel Villa Izalco', direccion: 'Sonsonate', departamento: 'Sonsonate', habitaciones_min_precio: '50.00' },
-  { id: 2, nombre: 'Hotel Villa Dorada', direccion: 'San Salvador', departamento: 'San Salvador', habitaciones_min_precio: '100.00' },
-])
+onMounted(() => {
+  homestore.fetchHoteles();
+})
 
 const toggle = (groupId, value) => {
   if (selected.value[groupId] === value) {
@@ -42,6 +46,8 @@ const toggle = (groupId, value) => {
 const toggleFavorite = (hotel) => {
   hotel.favorite = !hotel.favorite
 }
+
+
 
 const verHabitaciones = (hotel) => {
   alert(`Ver habitaciones de: ${hotel.nombre}`)
@@ -58,7 +64,7 @@ const checkPrecio = (precio, rango) => {
 }
 
 const filteredHotels = computed(() => {
-  return hotels.value.filter(hotel => {
+  return homestore.hoteles.filter(hotel => {
     const matchDept = !selected.value.departamento ||
       hotel.departamento === selected.value.departamento
     const matchPrecio = !selected.value.precio ||
