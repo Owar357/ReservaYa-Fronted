@@ -12,3 +12,8 @@ html, body {
 body {
   font-family: 'Poppins', sans-serif;
 }
+
+:root {
+    --primary-color: #2a9db0;
+    --primary-color-text: #ffffff;
+}

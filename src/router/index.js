@@ -5,6 +5,7 @@ import Register from '@/views/AuthViews/Register.vue'
 import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
 
 
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -19,6 +20,7 @@ const router = createRouter({
       component: AdminEstadisticas
     },
 
+    
     {
       path: '/register',
       name: 'register',
@@ -37,11 +39,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
-     {
-         path: '/hoteles',
-         name: 'hoteles',
-        component: () => import('../views/Index.vue'),
-    },
+     
 
     {
         path: '/reserva',
