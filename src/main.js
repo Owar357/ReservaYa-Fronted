@@ -11,7 +11,7 @@ import './assets/main.css'
 
 import 'primevue/resources/themes/saga-blue/theme.css'
 import 'primevue/resources/primevue.css'
-import 'primeicons/primeicons.css'
+ 
 
 const app = createApp(App)
 app.use(createPinia())

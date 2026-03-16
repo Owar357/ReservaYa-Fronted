@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import Login from '@/views/Login.vue'
 import Register from '@/views/Register.vue'
 import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
+import AdmiCrudHoteles from '@/views/AdmiCrudHoteles.vue'
 
 
 const router = createRouter({
@@ -53,7 +54,12 @@ const router = createRouter({
           path: '/agregar',
           name: 'agregar',
          component: () => import('../views/AgregarUsuario.vue'),
-      }
+      },
+       {
+      path: '/admi',
+      name: 'Admi',
+      component: AdmiCrudHoteles,
+    },
   
   ]
 });
