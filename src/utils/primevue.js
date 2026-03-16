@@ -15,6 +15,8 @@ import Badge from 'primevue/badge';
 import Avatar from 'primevue/avatar';
 import Ripple from 'primevue/ripple';
 import Calendar from 'primevue/calendar'
+import Sidebar from 'primevue/sidebar';
+import StyleClass from 'primevue/styleclass'
 
 
 export default function setupPrimeVue(app){
@@ -35,7 +37,9 @@ export default function setupPrimeVue(app){
     app.component('Menubar',Menubar)
     app.component('Badge', Badge) 
     app.component('Avatar', Avatar) 
-    app.directive('Ripple', Ripple) 
+    app.directive('ripple', Ripple) 
     app.component('Calendar', Calendar) 
-
+    app.component('Sidebar', Sidebar)
+    app.directive('styleclass', StyleClass)
+    
 }
