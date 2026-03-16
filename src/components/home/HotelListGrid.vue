@@ -8,7 +8,7 @@
             </div>
 
             <div class="flex-1">
-                <p class="text-sm text-gray-500">{{ hotel.direccion }}</p>
+                <p class="text-sm text-gray-500">{{ hotel.departamento }}</p>
                 <p class="font-semibold text-gray-800">{{ hotel.nombre }}</p>
             </div>
 

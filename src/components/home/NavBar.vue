@@ -10,7 +10,7 @@
 
             <!-- Links a la derecha -->
             <div class="flex items-center gap-4 ml-auto">
-                <router-link to="/hoteles" class="text-white font-medium whitespace-nowrap">Hoteles</router-link>
+                <router-link to="/" class="text-white font-medium whitespace-nowrap">Hoteles</router-link>
 
                 <router-link v-if="authStore.isAuthenticated && authStore.isUsuario" to="/mis-reservas"
                     class="text-white font-medium whitespace-nowrap">
@@ -35,7 +35,7 @@
                     <Avatar icon="pi pi-user" shape="circle" class="bg-white cursor-pointer"
                         @click="menuOpen = !menuOpen" />
 
-                    <!-- Dropdown -->
+                  
                     <div v-if="menuOpen" class="absolute right-0 mt-2 bg-white rounded-lg shadow-lg w-40 z-50">
                         <p class="px-4 py-2 text-sm text-gray-700 border-b font-medium">
                             {{ authStore.user?.name }}

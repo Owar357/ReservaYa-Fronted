@@ -27,6 +27,7 @@ import HotelSidebar from '@/components/home/HotelSidebar.vue'
 import NavBar from '@/components/home/NavBar.vue'
 import HotelListGrid from '@/components/home/HotelListGrid.vue'
 import { useHomeStore } from '@/stores/homeStore'
+import router from '@/router'
 
 const homestore = useHomeStore()
 const selected = ref({})
@@ -50,7 +51,7 @@ const toggleFavorite = (hotel) => {
 
 
 const verHabitaciones = (hotel) => {
-  alert(`Ver habitaciones de: ${hotel.nombre}`)
+  router.push(`/habitacionesHotel/${hotel.id}`)
 }
 
 const checkPrecio = (precio, rango) => {
