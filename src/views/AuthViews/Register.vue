@@ -56,7 +56,7 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
             <input
-              v-model="form.password_confirmation "
+              v-model="form.password_confirmation"
               type="password"
               placeholder="Confirmar password"
               class="w-full px-4 py-3 bg-gray-200 border-none rounded-lg focus:ring-2 focus:ring-cyan-400 focus:outline-none"
@@ -156,6 +156,7 @@ const sendRegister = async () =>{
   
  } catch (error){
 
+  console.log(error.respose?.data)
   errorMessage.value = "Error al registrarse"
 
  }
