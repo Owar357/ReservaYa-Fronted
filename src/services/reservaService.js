@@ -1,7 +1,19 @@
 import api from "./api";
 
 export default {
-    store(reserva) {
-        return api.post("/user/reserva", reserva);
-    }
-}
+  getAll() {
+    return api.get("/user/reserva");
+  },
+
+  getById(id) {
+    return api.get(`/user/reserva/${id}`);
+  },
+
+  cancelar(id) {
+    return api.delete(`/user/reserva/${id}`);
+  },
+
+  store(reserva) {
+    return api.post("/user/reserva", reserva);
+  },
+};

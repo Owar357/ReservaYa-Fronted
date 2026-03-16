@@ -64,9 +64,9 @@ const router = createRouter({
     },
 
     {
-      path: "/reserva",
+      path: "/mis-reservas",
       name: "reserva",
-      component: () => import("../views/VistaReservaU.vue"),
+      component: () => import("../views/MisReservas.vue"),
     },
     {
       path: "/agregar",
