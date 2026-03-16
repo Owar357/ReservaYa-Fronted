@@ -23,7 +23,8 @@
             <p>Habitación Numero: <span>{{ numero }}</span></p>
             <p>Capacidad para {{ capacidad }}</p>
             <p>Precio/Noche: <strong>${{ precio }}</strong></p>
-            <button class="btn-reservar">Reservar</button>
+            <button @click="$emit('reservar')" class="btn-reservar">Reservar</button>
+
         </div>
     </div>
 </template>
@@ -37,8 +38,11 @@ const props = defineProps({
     numero: Number,
     capacidad: Number,
     precio: String,
-    imagenes: Array  // ← array de imágenes
+    imagenes: Array  
 })
+
+
+defineEmits(['reservar'])
 
 const currentIndex = ref(0)
 
@@ -61,6 +65,7 @@ const prev = () => {
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     display: block;
+    overflow: hidden;
 }
 
 .room-img {

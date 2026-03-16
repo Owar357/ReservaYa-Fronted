@@ -1,47 +1,67 @@
 <template>
-
   <div>
     <NavBar />
 
-    <div class="hotel-page">
+    <div class="flex gap-6 px-6 py-6">
+      
+      <!-- Contenido principal -->
+      <div class="flex-1">
+        <div class="hotel-hero">
+          <img :src="store.hotel?.imagen" :alt="store.hotel?.nombre" class="hotel-img" />
+          <div class="hotel-info">
+            <h1 class="hotel-name">{{ store.hotel?.nombre }}</h1>
+            <p class="hotel-location">{{ store.hotel?.departamento }}</p>
+            <p class="hotel-desc">{{ store.hotel?.descripcion }}</p>
+          </div>
+        </div>
 
-      <div class="hotel-hero">
-        <img :src="store.hotel?.imagen" :alt="store.hotel?.nombre" class="hotel-img" />
+        <h2 class="section-title">Elige Tu Habitación</h2>
 
-        <div class="hotel-info">
-          <h1 class="hotel-name">{{ store.hotel?.nombre }}</h1>
-          <p class="hotel-location">{{ store.hotel?.departamento }}</p>
-          <p class="hotel-desc">{{ store.hotel?.descripcion }}</p>
+        <div class="rooms-grid">
+          <HabitacionCard 
+            v-for="habitacion in store.habitaciones" 
+            :key="habitacion.id" 
+            :nombre="habitacion.nombre"
+            :tipo="habitacion.tipo_habitacion?.nombre" 
+            :numero="habitacion.num_habitacion"
+            :capacidad="habitacion.capacidad" 
+            :precio="habitacion.precio" 
+            :imagenes="habitacion.imagenes" 
+            @reservar="reservar(habitacion)"
+          />
         </div>
       </div>
 
-      <h2 class="section-title">Elige Tu Habitación</h2>
-
-      <div class="rooms-grid">
-        <HabitacionCard v-for="habitacion in store.habitaciones" :key="habitacion.id" :nombre="habitacion.nombre"
-          :tipo="habitacion.tipo_habitacion?.nombre" :numero="habitacion.num_habitacion"
-          :capacidad="habitacion.capacidad" :precio="habitacion.precio" :imagenes="habitacion.imagenes" />
+      <!-- Carrito lateral fijo -->
+      <div class="w-72 flex-shrink-0">
+        <CarritoReserva />
       </div>
 
     </div>
+    <Toast />
   </div>
-
-
-
-
-
-
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref} from 'vue'
 import { useRoute } from 'vue-router'
 import { useHabitacionStore } from '@/stores/habitacionesHotelStore'
 import HabitacionCard from '@/components/home/HabitacionCard.vue'
+
+import { useReservaStore } from '@/stores/reservaStore'
 import NavBar from '@/components/home/NavBar.vue'
+import CarritoReserva from '@/components/home/CarritoReserva.vue'
+
 
 const route = useRoute()
+const reservaStore = useReservaStore()
 const store = useHabitacionStore()
+
+// cambia esto
+const reservar = (habitacion) => {
+  reservaStore.agregarHabitacion(habitacion)
+}
+
 
 onMounted(() => {
   store.fetchHabitaciones(route.params.id)
