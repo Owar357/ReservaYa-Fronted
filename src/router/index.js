@@ -6,7 +6,6 @@ import { createRouter, createWebHistory } from "vue-router";
 import ListaUsuarios from "../views/ListaUsuarios.vue";
 import UsuarioHabitacionHotel from "@/views/UsuarioHabitacionHotel.vue";
 
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -20,7 +19,6 @@ const router = createRouter({
       name: "AdminEstadisticas",
       component: AdminEstadisticas,
     },
-   
 
     {
       path: "/register",
@@ -49,9 +47,20 @@ const router = createRouter({
     },
 
     {
-      path: "/habitacionesHotel/:id", 
+      path: "/habitacionesHotel/:id",
       name: "habitaciones",
-      component: UsuarioHabitacionHotel
+      component: UsuarioHabitacionHotel,
+    },
+
+    {
+      path: "/pago-exitoso",
+      name: "pago-exitoso",
+      component: () => import("@/views/PagoExitoso.vue"),
+    },
+    {
+      path: "/pago-cancelado",
+      name: "pago-cancelado",
+      component: () => import("@/views/PagoCancelado.vue"),
     },
 
     {

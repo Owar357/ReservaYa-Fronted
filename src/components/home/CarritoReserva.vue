@@ -66,6 +66,7 @@
 import { computed } from 'vue'
 import { useReservaStore } from '@/stores/reservaStore'
 import Swal from 'sweetalert2'
+import pagoService from '@/services/pagoService'
 
 const reservaStore = useReservaStore()
 
@@ -80,17 +81,18 @@ const puedeConfirmar = computed(() => {
 
 const confirmar = async () => {
   try {
-    await reservaStore.confirmarReserva()
 
-     Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Reserva confirmada!',
-      showConfirmButton: false,
-      timer: 3000
-    })
+     const reserva =  await reservaStore.confirmarReserva()
 
+     const{data} = await pagoService.procesarPago({
+        reserva_id : reserva.id,
+        cantidad: reservaStore.total
+     })
+
+
+      window.location.href = data.url
+
+     
     reservaStore.carrito = []
     reservaStore.fechaEntrada = null
     reservaStore.fechaSalida = null

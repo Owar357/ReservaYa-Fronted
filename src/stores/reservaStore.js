@@ -30,10 +30,10 @@ export const useReservaStore = defineStore('reserva', () => {
     }
   }
 
-  const confirmarReserva = async () => {
+ const confirmarReserva = async () => {
     loading.value = true
     try {
-      const payload = {
+      const { data } = await reservaService.store({
         fecha_entrada: fechaEntrada.value,
         fecha_salida: fechaSalida.value,
         total_precio: total.value,
@@ -41,17 +41,15 @@ export const useReservaStore = defineStore('reserva', () => {
           habitacion_id: h.id,
           precio: parseFloat(h.precio) * noches.value
         }))
-      }
-      console.log(payload)  // ← ver qué se manda
-      await reservaService.store(payload)
-        } catch (error) {
+      })
+      return data.data 
+    } catch (error) {
       console.error('Error al confirmar reserva:', error)
       throw error
     } finally {
       loading.value = false
     }
-  }
-
+}
   return {
     carrito,
     fechaEntrada,
