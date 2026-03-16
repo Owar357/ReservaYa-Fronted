@@ -3,8 +3,11 @@ import Login from '@/views/AuthViews/Login.vue';
 import Register from '@/views/AuthViews/Register.vue';
 import HomeView from '@/views/HomeView.vue';
 import { createRouter, createWebHistory } from 'vue-router'
-import ListaUsuarios from '../views/ListaUsuarios.vue';
-
+import HomeView from '../views/HomeView.vue'
+import Login from '@/views/Login.vue'
+import Register from '@/views/Register.vue'
+import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
+import AdmiCrudHoteles from '@/views/AdmiCrudHoteles.vue'
 
 
 const router = createRouter({
