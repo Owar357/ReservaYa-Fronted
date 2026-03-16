@@ -1,6 +1,6 @@
 <template>
   <div class="form-container">
-    <h1>Agregar un nuevo usuario</h1>
+    <h1>Editar usuario</h1>
     <h2>Informacion del usuario</h2>
 
     <div class="form-group">
@@ -23,14 +23,13 @@
       <label for="rol">Rol:</label>
       <select v-model="form.rol" id="rol">
         <option value="Gerente">Gerente</option>
-        <option value="AdminUsuario">AdminUsuario</option>
         <option value="Recepcionista">Recepcionista</option>
       </select>
     </div>
 
     <div class="form-buttons">
-      <button type="button" class="btn-guardar" @click="registrar">
-        Registrar Usuario
+      <button type="button" class="btn-guardar" @click="guardar">
+        Guardar cambios
       </button>
       <button type="button" class="btn-cancelar" @click="emit('cancelar')">
         Cancelar
@@ -40,10 +39,17 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, watch } from 'vue'
 import Swal from 'sweetalert2'
 
-const emit = defineEmits(['cancelar', 'registrado'])
+const props = defineProps({
+  usuario: {
+    type: Object,
+    required: true
+  }
+})
+
+const emit = defineEmits(['cancelar', 'actualizado'])
 
 const form = reactive({
   nombre: '',
@@ -53,7 +59,17 @@ const form = reactive({
   rol: 'Recepcionista'
 })
 
-function registrar() {
+watch(() => props.usuario, (val) => {
+  if (val) {
+    form.nombre   = val.nombre
+    form.correo   = val.correo
+    form.telefono = val.telefono
+    form.rol      = val.rol
+    form.password = ''
+  }
+}, { immediate: true })
+
+function guardar() {
   if (!form.nombre || !form.correo) {
     Swal.fire({
       icon: 'error',
@@ -64,7 +80,7 @@ function registrar() {
     return
   }
 
-  emit('registrado', {
+  emit('actualizado', {
     nombre: form.nombre,
     correo: form.correo,
     telefono: form.telefono,
@@ -74,14 +90,12 @@ function registrar() {
 
   Swal.fire({
     icon: 'success',
-    title: '¡Registrado!',
-    text: `El usuario ${form.nombre} fue agregado correctamente.`,
+    title: '¡Actualizado!',
+    text: 'Los datos del usuario fueron actualizados.',
     confirmButtonColor: '#083b7e',
     timer: 2000,
     showConfirmButton: false
   })
-
-  form.nombre = ''; form.password = ''; form.correo = ''; form.telefono = ''; form.rol = 'Recepcionista'
 }
 </script>
 

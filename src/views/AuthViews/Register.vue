@@ -21,40 +21,50 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
             <input
+              v-model="form.name"
               type="text"
-              placeholder="Tu nombre"
+              placeholder="Nombre"
               class="w-full px-4 py-3 bg-gray-200 border-none rounded-lg focus:ring-2 focus:ring-cyan-400 focus:outline-none"
-            />
+            /> 
+            <span v-if="errors.name" class="text-red-500 text-xs mt-1">{{errors.name}}</span>
+
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
+              v-model="form.email"
               type="email"
               placeholder="E-mail"
               class="w-full px-4 py-3 bg-gray-200 border-none rounded-lg focus:ring-2 focus:ring-cyan-400 focus:outline-none"
             />
+              <span v-if="errors.email" class="text-red-500 text-xs mt-1">{{errors.email}}</span>
           </div>
+        
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
             <input
+               v-model="form.password"
               type="password"
               placeholder="Password"
               class="w-full px-4 py-3 bg-gray-200 border-none rounded-lg focus:ring-2 focus:ring-cyan-400 focus:outline-none"
             />
+              <span v-if="errors.password" class="text-red-500 text-xs mt-1">{{errors.password}}</span>
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Contraseña</label>
             <input
+              v-model="form.password_confirmation "
               type="password"
               placeholder="Confirmar password"
               class="w-full px-4 py-3 bg-gray-200 border-none rounded-lg focus:ring-2 focus:ring-cyan-400 focus:outline-none"
             />
+              <span v-if="errors.password_confirmation" class="text-red-500 text-xs mt-1">{{errors.password_confirmation}}</span>
           </div>
 
-          <button class="w-full bg-red-400 hover:bg-red-500 text-white font-semibold py-3 rounded-full transition duration-300 mt-2">
+          <button @click="sendRegister" :disabled="loading"  class="w-full bg-red-400 hover:bg-red-500 text-white font-semibold py-3 rounded-full transition duration-300 mt-2">
             Registrarse
           </button>
 
@@ -73,4 +83,90 @@
 </template>
 
 <script setup>
+import {ref, reactive } from "vue"; 
+import { useRouter } from "vue-router"; 
+import { useAuthStore } from "@/stores/authStore";
+
+const router = useRouter(); 
+const authStore = useAuthStore();
+
+const loading = ref(false);
+const errorMessage = ref(null);
+
+const form = reactive({
+  name:"",
+  email:"",
+  password:"",
+  password_confirmation:""
+});
+
+const errors = reactive({
+  name: null,
+  email: null,
+  password: null,
+  password_confirmation: null
+})
+
+const validaciones = () => {
+ 
+  //limpia errores anteriores
+  errors.name = null
+  errors.email = null
+  errors.password = null
+  errors.password_confirmation = null
+
+  let esValido = true
+
+  if (!form.name) { 
+    errors.name = "El nombre es requerido"
+    esValido = false
+  }
+  if (!form.email) {
+    errors.email = "El email es requerido"
+    esValido= false
+  }
+  if (form.password.length < 8) {
+    errors.password = "Mínimo 8 caracteres"
+    esValido = false
+  }
+  if (form.password !== form.password_confirmation) {
+    errors.password_confirmation = "Las contraseñas no coinciden"
+    esValido = false
+  }
+
+  return esValido  
+}
+
+
+
+
+const sendRegister = async () =>{
+ loading.value = true;
+
+ const esValido = validaciones()
+
+ if(!esValido){
+   loading.value = false;
+   return
+ } 
+
+ try {
+
+  await authStore.register(form);
+  
+ } catch (error){
+
+  errorMessage.value = "Error al registrarse"
+
+ }
+ finally{
+
+  loading.value = false
+ }
+}
+
+const goToLogin =() => {
+  router.push("/login")
+}
+
 </script>
