@@ -80,6 +80,11 @@ const router = createRouter({
           name: "hoteles",
           component: () => import("../views/AdminViews/Hoteles/AdmiCrudHoteles.vue"),
         },
+        {
+          path: "habitaciones",
+          name: "habitaciones",
+          component: () => import("../views/AdminViews/Habitaciones/ListaHabitaciones.vue")
+        },
         // agregar las demás rutas hijas  aquí igual
       ],
     },
