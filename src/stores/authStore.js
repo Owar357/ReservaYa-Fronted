@@ -49,7 +49,7 @@ export const useAuthStore = defineStore("auth", {
 
         // Redirección según rol
         if (this.isUsuarioAdmin || this.isPropietario || this.isGerente || this.isRecepcionista) {
-          router.push("/admin/crudusuarios");
+          router.push("/admin");
         } else {
           router.push("/");
         }
