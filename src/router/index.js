@@ -1,11 +1,4 @@
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
-import Login from '@/views/AuthViews/Login.vue';
-import Register from '@/views/AuthViews/Register.vue';
-import HomeView from '@/views/HomeView.vue';
 import { createRouter, createWebHistory } from 'vue-router'
-import ListaUsuarios from '../views/VistaAdmin/ListaUsuarios.vue';
-import AgregarUsuario from '@/views/VistaAdmin/AgregarUsuario.vue';
-import EditarUsuario from '@/views/VistaAdmin/EditarUsuario.vue';
 import { useAuthStore } from '@/stores/authStore';
 
 
