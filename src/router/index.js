@@ -1,9 +1,14 @@
-import AdminEstadisticas from "@/views/AdminEstadisticas.vue";
-import Login from "@/views/AuthViews/Login.vue";
-import Register from "@/views/AuthViews/Register.vue";
-import HomeView from "@/views/HomeView.vue";
-import { createRouter, createWebHistory } from "vue-router";
-import UsuarioHabitacionHotel from "@/views/UserViews/UsuarioHabitacionHotel.vue";
+import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
+import Login from '@/views/AuthViews/Login.vue';
+import Register from '@/views/AuthViews/Register.vue';
+import HomeView from '@/views/HomeView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import ListaUsuarios from '../views/VistaAdmin/ListaUsuarios.vue';
+import AgregarUsuario from '@/views/VistaAdmin/AgregarUsuario.vue';
+import EditarUsuario from '@/views/VistaAdmin/EditarUsuario.vue';
+import { useAuthStore } from '@/stores/authStore';
+
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +37,7 @@ const router = createRouter({
       name: "home",
       component: HomeView,
     },
+
     {
       path: "/about",
       name: "about",
@@ -90,5 +96,12 @@ const router = createRouter({
     },
   ],
 });
+
+router.beforeEach((to, from) => {
+  const authStore = useAuthStore()
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return '/login'
+  }
+})
 
 export default router
