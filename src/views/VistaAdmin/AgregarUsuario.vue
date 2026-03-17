@@ -16,15 +16,10 @@
       <input v-model="form.correo" type="email" id="correo" placeholder="correo@ejemplo.com" />
     </div>
     <div class="form-group">
-      <label for="telefono">Teléfono:</label>
-      <input v-model="form.telefono" type="tel" id="telefono" placeholder="0000-0000" />
-    </div>
-    <div class="form-group">
       <label for="rol">Rol:</label>
       <select v-model="form.rol" id="rol">
-        <option value="Gerente">Gerente</option>
-        <option value="AdminUsuario">AdminUsuario</option>
-        <option value="Recepcionista">Recepcionista</option>
+        <option value="GERENTE">Gerente</option>
+        <option value="RECEPCIONISTA">Recepcionista</option>
       </select>
     </div>
 
@@ -42,46 +37,71 @@
 <script setup>
 import { reactive } from 'vue'
 import Swal from 'sweetalert2'
+import api from '@/services/api'
+import { useAuthStore } from '@/stores/authStore'
 
+const props = defineProps({
+  hotelId: {
+    type: Number,
+    required: true
+  }
+})
+
+const authStore = useAuthStore()
 const emit = defineEmits(['cancelar', 'registrado'])
 
 const form = reactive({
   nombre: '',
   password: '',
   correo: '',
-  telefono: '',
-  rol: 'Recepcionista'
+  rol: 'RECEPCIONISTA'
 })
 
-function registrar() {
-  if (!form.nombre || !form.correo) {
+async function registrar() {
+  if (!form.nombre || !form.correo || !form.password) {
     Swal.fire({
       icon: 'error',
       title: 'Campos incompletos',
-      text: 'Nombre y correo son obligatorios.',
+      text: 'Nombre, correo y contraseña son obligatorios.',
       confirmButtonColor: '#083b7e'
     })
     return
   }
 
-  emit('registrado', {
-    nombre: form.nombre,
-    correo: form.correo,
-    telefono: form.telefono,
-    rol: form.rol,
-    password: form.password
-  })
+  try {
+    await api.post('/admin/hotelusuarios', {
+      hotel_id: props.hotelId,
+      name: form.nombre,
+      email: form.correo,
+      password: form.password,
+      rol: form.rol,
+      fecha_asignacion: new Date().toISOString().split('T')[0]
+    })
 
-  Swal.fire({
-    icon: 'success',
-    title: '¡Registrado!',
-    text: `El usuario ${form.nombre} fue agregado correctamente.`,
-    confirmButtonColor: '#083b7e',
-    timer: 2000,
-    showConfirmButton: false
-  })
+    Swal.fire({
+      icon: 'success',
+      title: '¡Registrado!',
+      text: `El usuario ${form.nombre} fue agregado correctamente.`,
+      confirmButtonColor: '#083b7e',
+      timer: 2000,
+      showConfirmButton: false
+    })
 
-  form.nombre = ''; form.password = ''; form.correo = ''; form.telefono = ''; form.rol = 'Recepcionista'
+    form.nombre = ''
+    form.password = ''
+    form.correo = ''
+    form.rol = 'RECEPCIONISTA'
+
+    emit('registrado')
+
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.response?.data?.message ?? 'No se pudo registrar el usuario.',
+      confirmButtonColor: '#083b7e'
+    })
+  }
 }
 </script>
 

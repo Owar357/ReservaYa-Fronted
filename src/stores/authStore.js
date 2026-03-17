@@ -7,6 +7,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     token: null, //* ← el JWT que devuelve Laravel al hacer login
     user: null, //* ← los datos del usuario (name, email, roles...)
+    hotelId: null,
   }),
 
   persist: true, //* permite la persistencia automática de datos
@@ -21,8 +22,8 @@ export const useAuthStore = defineStore("auth", {
       return state.user?.roles?.some((role) => role === "USUARIO"); //* busca en el array de roles para ver si existe uno igual al puesto aca y devuelve true o false segun el caso
     },
 
-      isUsuarioAdmin: (state) => {
-        return state.user?.roles?.some((role) => role === "USUARIOADMIN");
+    isUsuarioAdmin: (state) => {
+      return state.user?.roles?.some((role) => role === "USUARIOADMIN");
     },
 
     isPropietario: (state) => {
@@ -44,10 +45,11 @@ export const useAuthStore = defineStore("auth", {
 
         this.token = data.access_token;
         this.user = data.user;
+        this.hotelId = data.hotel_id;
 
         // Redirección según rol
         if (this.isUsuarioAdmin || this.isPropietario || this.isGerente || this.isRecepcionista) {
-          router.push("/admin/dashboard");
+          router.push("/admin/crudusuarios");
         } else {
           router.push("/");
         }

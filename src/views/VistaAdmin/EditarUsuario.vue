@@ -15,15 +15,12 @@
       <label for="correo">Correo Electrónico:</label>
       <input v-model="form.correo" type="email" id="correo" placeholder="correo@ejemplo.com" />
     </div>
-    <div class="form-group">
-      <label for="telefono">Teléfono:</label>
-      <input v-model="form.telefono" type="tel" id="telefono" placeholder="0000-0000" />
-    </div>
+
     <div class="form-group">
       <label for="rol">Rol:</label>
       <select v-model="form.rol" id="rol">
-        <option value="Gerente">Gerente</option>
-        <option value="Recepcionista">Recepcionista</option>
+        <option value="GERENTE">Gerente</option>
+        <option value="RESEPCIONISTA">Recepcionista</option>
       </select>
     </div>
 
@@ -41,6 +38,7 @@
 <script setup>
 import { reactive, watch } from 'vue'
 import Swal from 'sweetalert2'
+import api from '@/services/api'
 
 const props = defineProps({
   usuario: {
@@ -54,48 +52,62 @@ const emit = defineEmits(['cancelar', 'actualizado'])
 const form = reactive({
   nombre: '',
   password: '',
-  correo: '',
-  telefono: '',
-  rol: 'Recepcionista'
+  rol: 'RECEPCIONISTA'
 })
 
 watch(() => props.usuario, (val) => {
   if (val) {
     form.nombre   = val.nombre
-    form.correo   = val.correo
-    form.telefono = val.telefono
     form.rol      = val.rol
     form.password = ''
   }
 }, { immediate: true })
 
-function guardar() {
-  if (!form.nombre || !form.correo) {
+async function guardar() {
+  if (!form.nombre) {
     Swal.fire({
       icon: 'error',
       title: 'Campos incompletos',
-      text: 'Nombre y correo son obligatorios.',
+      text: 'El nombre es obligatorio.',
       confirmButtonColor: '#083b7e'
     })
     return
   }
 
-  emit('actualizado', {
-    nombre: form.nombre,
-    correo: form.correo,
-    telefono: form.telefono,
-    rol: form.rol,
-    password: form.password
-  })
+  try {
+    const payload = {
+      name: form.nombre,
+      rol:  form.rol,
+    }
 
-  Swal.fire({
-    icon: 'success',
-    title: '¡Actualizado!',
-    text: 'Los datos del usuario fueron actualizados.',
-    confirmButtonColor: '#083b7e',
-    timer: 2000,
-    showConfirmButton: false
-  })
+    if (form.password) {
+      payload.password = form.password
+    }
+
+    await api.put(`/admin/hotelusuarios/${props.usuario.id}`, payload)
+
+    Swal.fire({
+      icon: 'success',
+      title: '¡Actualizado!',
+      text: 'Los datos del usuario fueron actualizados.',
+      confirmButtonColor: '#083b7e',
+      timer: 2000,
+      showConfirmButton: false
+    })
+
+    emit('actualizado', {
+      nombre: form.nombre,
+      rol:    form.rol,
+    })
+
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: error.response?.data?.message ?? 'No se pudo actualizar el usuario.',
+      confirmButtonColor: '#083b7e'
+    })
+  }
 }
 </script>
 

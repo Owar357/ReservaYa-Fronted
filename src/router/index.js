@@ -3,7 +3,10 @@ import Login from '@/views/AuthViews/Login.vue';
 import Register from '@/views/AuthViews/Register.vue';
 import HomeView from '@/views/HomeView.vue';
 import { createRouter, createWebHistory } from 'vue-router'
-import ListaUsuarios from '../views/ListaUsuarios.vue';
+import ListaUsuarios from '../views/VistaAdmin/ListaUsuarios.vue';
+import AgregarUsuario from '@/views/VistaAdmin/AgregarUsuario.vue';
+import EditarUsuario from '@/views/VistaAdmin/EditarUsuario.vue';
+import { useAuthStore } from '@/stores/authStore';
 
 
 
@@ -20,25 +23,33 @@ const router = createRouter({
       name: 'AdminEstadisticas',
       component: AdminEstadisticas
     },
-    
-    
+
+
     {
       path: '/register',
       name: 'register',
       component: Register,
     },
 
-      {
-      path: '/crudUsuarios',
-      name: 'crudUsuarios',
-      component: ListaUsuarios,
-    }, 
+    { path: '/admin/crudusuarios', name: 'crudUsuarios', component: ListaUsuarios, meta: { requiresAuth: true } },
+     {
+      path: '/Agregar',
+      name: 'Agregarusuario',
+      component: AgregarUsuario,
+    },
+
+    {
+      path: '/Editar',
+      name: 'EditarUsuario',
+      component: EditarUsuario,
+    },
 
     {
       path: '/',
       name: 'home',
       component: HomeView,
     },
+
     {
       path: '/about',
       name: 'about',
@@ -47,7 +58,7 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
-     
+
 
     {
       path: '/reserva',
@@ -58,16 +69,23 @@ const router = createRouter({
     {
       path: '/agregar',
       name: 'agregar',
-      component: () => import('../views/AgregarUsuario.vue'),
+      component: () => import('../views/VistaAdmin/AgregarUsuario.vue'),
     },
       {
       path: '/usuarios',
       name: 'usuarios',
-      component: () => import('../views/ListaUsuarios.vue'),
+      component: () => import('../views/VistaAdmin/ListaUsuarios.vue'),
     }
 
   ]
 });
+
+router.beforeEach((to, from) => {
+  const authStore = useAuthStore()
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return '/login'
+  }
+})
 
 export default router
 
