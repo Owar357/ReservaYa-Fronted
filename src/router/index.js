@@ -3,7 +3,6 @@ import Login from "@/views/AuthViews/Login.vue";
 import Register from "@/views/AuthViews/Register.vue";
 import HomeView from "@/views/HomeView.vue";
 import { createRouter, createWebHistory } from "vue-router";
-import ListaUsuarios from "../views/ListaUsuarios.vue";
 import UsuarioHabitacionHotel from "@/views/UserViews/UsuarioHabitacionHotel.vue";
 
 const router = createRouter({
@@ -26,11 +25,7 @@ const router = createRouter({
       component: Register,
     },
 
-    {
-      path: "/crudUsuarios",
-      name: "crudUsuarios",
-      component: ListaUsuarios,
-    },
+ 
 
     {
       path: "/",
@@ -68,22 +63,26 @@ const router = createRouter({
       name: "reserva",
       component: () => import("../views/UserViews/MisReservas.vue"),
     },
-    {
-      path: "/agregar",
-      name: "agregar",
-      component: () => import("../views/AgregarUsuario.vue"),
-    },
-    {
-      path: "/usuarios",
-      name: "usuarios",
-      component: () => import("../views/ListaUsuarios.vue"),
-    },
 
+    //HomeAdmin
     {
-      path:"/admin",
+      path: "/admin",
       name: "admin",
-      component: ()=> import("../views/AdminViews/HomeAdmin.vue")
-    }
+      component: () => import("../views/AdminViews/HomeAdmin.vue"),
+      children: [
+        {
+          path: "usuarios",
+          name: "usuarios",
+          component: () => import("../views/AdminViews/Usuarios/ListaUsuarios.vue"),
+        },
+          {
+          path: "hoteles",
+          name: "hoteles",
+          component: () => import("../views/AdminViews/Hoteles/AdmiCrudHoteles.vue"),
+        },
+        // agregar las demás rutas hijas  aquí igual
+      ],
+    },
   ],
 });
 
