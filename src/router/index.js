@@ -1,13 +1,10 @@
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
-import Login from '@/views/AuthViews/Login.vue';
-import Register from '@/views/AuthViews/Register.vue';
-import HomeView from '@/views/HomeView.vue';
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import Login from '@/views/Login.vue'
-import Register from '@/views/Register.vue'
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue'
-import AdmiCrudHoteles from '@/views/AdmiCrudHoteles.vue'
+
+import HomeView from '@/views/HomeView.vue'
+import Login from '@/views/AuthViews/Login.vue'
+import Register from '@/views/AuthViews/Register.vue'
+import ListaUsuarios from '@/views/ListaUsuarios.vue'
+
 
 
 const router = createRouter({
@@ -18,12 +15,7 @@ const router = createRouter({
       name: 'login',
       component: Login,
     },
-    {
-      path: '/AdminEstadisticas',
-      name: 'AdminEstadisticas',
-      component: AdminEstadisticas
-    },
-    
+ 
     
     {
       path: '/register',
@@ -36,7 +28,7 @@ const router = createRouter({
       name: 'crudUsuarios',
       component: ListaUsuarios,
     }, 
-
+     
     {
       path: '/',
       name: 'home',
@@ -67,8 +59,13 @@ const router = createRouter({
       path: '/usuarios',
       name: 'usuarios',
       component: () => import('../views/ListaUsuarios.vue'),
-    }
-
+    },
+    {
+      path: '/lista',
+      name: 'lista',
+      component: () => import('../views/ListaHabitaciones.vue'),
+    },
+    
   ]
 });
 
