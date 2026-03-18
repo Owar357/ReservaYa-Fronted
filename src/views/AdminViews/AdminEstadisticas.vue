@@ -2,6 +2,17 @@
   <div class="min-h-screen bg-gray-100 p-8">
     <div class="max-w-5xl mx-auto">
       <h2 class="text-lg font-bold text-gray-800 mb-5">Estadísticas</h2>
+      <div class="mb-6 w-64">
+        <select
+          v-model="hotelSeleccionado"
+          @change="cargarEstadisticas"
+          class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+        >
+          <option v-for="hotel in hotelStore.hoteles" :key="hotel.id" :value="hotel.id">
+            {{ hotel.nombre }}
+          </option>
+        </select>
+      </div>
       <div class="flex gap-4 mb-6">
         <div class="bg-white rounded-xl shadow px-6 py-4 flex items-center gap-4 min-w-[200px]">
           <div class="bg-blue-100 text-blue-600 rounded-full p-3">
@@ -9,7 +20,9 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Ingresos Totales</p>
-            <p class="text-2xl font-bold text-gray-800">${{ Number(ingresosTotales).toLocaleString() }}</p>
+            <p class="text-2xl font-bold text-gray-800">
+              ${{ Number(ingresosTotales).toLocaleString() }}
+            </p>
           </div>
         </div>
 
@@ -78,41 +91,50 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import Button from 'primevue/button'
-import api from '@/services/api'
-import { useAuthStore } from '@/stores/authStore'
+import { ref, onMounted, computed } from "vue";
+import api from "@/services/api";
+import { useAuthStore } from "@/stores/authStore";
+import { useHotelStore } from "@/stores/hotelStore";
 
-const authStore = useAuthStore()
+const authStore  = useAuthStore();
+const hotelStore = useHotelStore();
 
-const ingresosTotales = ref(0)
-const reservasTotales = ref(0)
-const ingresosMensuales = ref([])
-const habitaciones = ref([])
+const hotelSeleccionado = ref(null);
 
-const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+const ingresosTotales   = ref(0);
+const reservasTotales   = ref(0);
+const ingresosMensuales = ref([]);
+const habitaciones      = ref([]);
+
+const meses = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
 
 const bars = computed(() => {
-  const maxTotal = Math.max(...ingresosMensuales.value.map(m => m.total), 1)
-  return ingresosMensuales.value.map(m => ({
+  const maxTotal = Math.max(...ingresosMensuales.value.map((m) => m.total), 1);
+  return ingresosMensuales.value.map((m) => ({
     mes: meses[m.mes - 1],
-    label: '$' + Number(m.total).toLocaleString(),
-    heightPx: Math.round((m.total / maxTotal) * 140) + 'px'
-  }))
-})
+    label: "$" + Number(m.total).toLocaleString(),
+    heightPx: Math.round((m.total / maxTotal) * 140) + "px",
+  }));
+});
 
 async function cargarEstadisticas() {
   try {
-    const response = await api.get(`/admin/estadisticas?hotel=${authStore.hotelId}`)
-    const data = response.data.data
-    ingresosTotales.value = data.ingresos_totales
-    reservasTotales.value = data.reservas_totales
-    ingresosMensuales.value = data.ingresos_mensuales
-    habitaciones.value = data.top_habitaciones
+    const response = await api.get(`/admin/estadisticas?hotel=${hotelSeleccionado.value}`);
+    const data = response.data.data;
+    ingresosTotales.value   = data.ingresos_totales;
+    reservasTotales.value   = data.reservas_totales;
+    ingresosMensuales.value = data.ingresos_mensuales;
+    habitaciones.value      = data.top_habitaciones;
   } catch (error) {
-    console.error('Error al cargar estadísticas', error)
+    console.error("Error al cargar estadísticas", error);
   }
 }
 
-onMounted(() => cargarEstadisticas())
+onMounted(async () => {
+  await hotelStore.fetchHoteles()
+  hotelSeleccionado.value = authStore.hotelId ?? hotelStore.hoteles[0]?.id
+  if (hotelSeleccionado.value) {
+    cargarEstadisticas()
+  }
+})
 </script>

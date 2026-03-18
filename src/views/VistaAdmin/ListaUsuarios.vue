@@ -122,6 +122,7 @@ import AgregarUsuario from "./AgregarUsuario.vue";
 import EditarUsuario from "./EditarUsuario.vue";
 import api from "@/services/api";
 import { useAuthStore } from "@/stores/authStore";
+import hotelService from "@/services/hotelService";
 
 const authStore = useAuthStore();
 const usuarios = ref([]);
@@ -134,8 +135,8 @@ const usuarioSeleccionado = ref(null);
 
 async function cargarHoteles() {
   try {
-    const response = await api.get("/admin/hoteles");
-    hoteles.value = response.data.data;
+    const response = await hotelService.getHoteles();
+    hoteles.value = response.data.data ?? response.data;
   } catch (error) {
     Swal.fire("Error", "No se pudo cargar la lista de hoteles", "error");
   }

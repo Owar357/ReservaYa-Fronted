@@ -7,7 +7,7 @@ export const useAuthStore = defineStore("auth", {
   state: () => ({
     token: null, //* ← el JWT que devuelve Laravel al hacer login
     user: null, //* ← los datos del usuario (name, email, roles...)
-    hotelId: null,
+   
   }),
 
   persist: true, //* permite la persistencia automática de datos
