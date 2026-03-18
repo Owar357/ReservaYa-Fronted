@@ -1,9 +1,9 @@
-import AdminEstadisticas from "@/views/AdminEstadisticas.vue";
 import Login from "@/views/AuthViews/Login.vue";
 import Register from "@/views/AuthViews/Register.vue";
 import HomeView from "@/views/HomeView.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "@/stores/authStore";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,11 +13,7 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
-    {
-      path: "/AdminEstadisticas",
-      name: "AdminEstadisticas",
-      component: AdminEstadisticas,
-    },
+ 
 
     {
       path: "/register",
@@ -69,6 +65,11 @@ const router = createRouter({
       name: "admin",
       component: () => import("../views/AdminViews/HomeAdmin.vue"),
       children: [
+         {
+          path: "estadistiscas",
+          name: "estadisticas",
+          component: () => import("../views/AdminViews/AdminEstadisticas.vue"),
+        },
         {
           path: "usuarios",
           name: "usuarios",

@@ -7,15 +7,13 @@
         </div>
 
         <!-- Dashboard -->
-        <!-- <div @click="activeItem = 'dashboard'" class="flex align-items-center p-3 border-round cursor-pointer mb-1"
-            :class="activeItem === 'dashboard' ? 'bg-primary text-white' : 'text-700 hover:surface-100'">
+         <div @click="navigate('/admin/estadistiscas')"  class="flex align-items-center p-3 border-round cursor-pointer mb-1"
+            :class="activeItem === 'estadistiscas' ? 'bg-primary text-white' : 'text-700 hover:surface-100'">
             <i class="pi pi-chart-bar mr-2"></i>
             <span class="font-medium">Analíticas</span>
-        </div> -->
+        </div> 
 
-
-        <hr class="my-3" />
-
+    
         <!-- Label SISTEMA -->
         <p class="text-xs font-semibold text-500 mb-2">REGISTROS</p>
 
@@ -79,10 +77,10 @@ const activeItem = computed(() => {
     if (route.path.includes('hoteles')) return 'hoteles'
     if (route.path.includes('reservas')) return 'reservas'
     if (route.path.includes('reportes')) return 'reportes'
-    return 'dashboard'
+    return 'estadistiscas'
 })
 
 const navigate = (ruta) => {
-    router.push(ruta)  // ← ya no necesitas activeItem.value aquí
+    router.push(ruta)  
 }
 </script>
