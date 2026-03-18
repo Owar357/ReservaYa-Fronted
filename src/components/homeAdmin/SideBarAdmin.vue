@@ -41,12 +41,12 @@
 
 
 
-        <!--   <div @click="activeItem = 'reservas'" class="flex align-items-center p-3 border-round cursor-pointer mb-1"
+          <div @click="navigate('/admin/reservas')" class="flex align-items-center p-3 border-round cursor-pointer mb-1"
             :class="activeItem === 'reservas' ? 'bg-primary text-white' : 'text-700 hover:surface-100'">
             <i class="pi pi-inbox mr-2"></i>
             <span class="font-medium">Reservas</span>
         </div>
-  -->
+  
 
 
 

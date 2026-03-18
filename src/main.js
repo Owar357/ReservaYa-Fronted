@@ -14,14 +14,7 @@ import './assets/main.css'
 import 'primevue/resources/themes/saga-blue/theme.css'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import 'primevue/resources/primevue.css'
-<<<<<<< HEAD
- import 'primeicons/primeicons.css'
-import 'primeicons/primeicons.css' 
- 
-
-=======
- import 'primeicons/primeicons.css'//tuve qeu aseptar conflictos 
->>>>>>> 372e7ac2036231b2603ddd54cff31986bf194f25
+import 'primeicons/primeicons.css'//tuve qeu aseptar conflictos 
 
 
 const app = createApp(App)
