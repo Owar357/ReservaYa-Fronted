@@ -12,9 +12,31 @@
       </div>
     </template>
     <template #end>
-      <div class="flex align-items-center gap-2">
+      <div class="flex align-items-center gap-2 relative">
         <span class="font-medium text-white text-lg mt-4">{{ authStore.user?.name }}</span>
-        <Avatar icon="pi pi-user" shape="circle" size="large" class="mt-2" />
+        
+        <!-- Avatar con click -->
+        <Avatar 
+          icon="pi pi-user" 
+          shape="circle" 
+          size="large" 
+          class="mt-2 cursor-pointer"
+          @click="menuOpen = !menuOpen"
+        />
+
+        <!-- Dropdown -->
+        <div v-if="menuOpen" class="absolute right-0 top-14 bg-white rounded-lg shadow-lg w-44 z-50">
+          <div class="px-4 py-3 border-b">
+            <p class="text-sm font-semibold text-gray-800">{{ authStore.user?.name }}</p>
+            <p class="text-xs text-gray-500">{{ authStore.user?.email }}</p>
+          </div>
+          <button 
+            @click="logout"
+            class="w-full text-left px-4 py-3 text-sm text-red-500 hover:bg-gray-100 flex items-center gap-2 transition">
+            <i class="pi pi-sign-out" />
+            Cerrar Sesión
+          </button>
+        </div>
       </div>
     </template>
   </Menubar>
@@ -22,18 +44,28 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useAuthStore } from '@/stores/authStore'  // ajusta la ruta
+import { useAuthStore } from '@/stores/authStore'
+import { useRouter } from 'vue-router'
 
 defineEmits(['toggleSidebar'])
 
 const authStore = useAuthStore()
+const router = useRouter()
+const menuOpen = ref(false)
 
 const windowWidth = ref(window.innerWidth)
 const isDesktop = computed(() => windowWidth.value >= 768)
 const updateWidth = () => windowWidth.value = window.innerWidth
 onMounted(() => window.addEventListener('resize', updateWidth))
 onUnmounted(() => window.removeEventListener('resize', updateWidth))
+
+const logout = async () => {
+  await authStore.logout()
+  menuOpen.value = false
+  router.push('/login')
+}
 </script>
+
 <style scoped>
 .navbar {
   background: #0f172a;  /* mismo color oscuro del sidebar */
