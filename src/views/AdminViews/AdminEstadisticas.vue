@@ -9,7 +9,7 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Ingresos Totales</p>
-            <p class="text-2xl font-bold text-gray-800">$23,450</p>
+            <p class="text-2xl font-bold text-gray-800">${{ Number(ingresosTotales).toLocaleString() }}</p>
           </div>
         </div>
 
@@ -19,14 +19,9 @@
           </div>
           <div>
             <p class="text-sm text-gray-500">Reservas Totales</p>
-            <p class="text-2xl font-bold text-gray-800">412</p>
+            <p class="text-2xl font-bold text-gray-800">{{ reservasTotales }}</p>
           </div>
         </div>
-      </div>
-      <div class="flex items-center justify-center gap-3 mb-6">
-        <Button icon="pi pi-chevron-left" text rounded size="small" />
-        <span class="text-sm text-gray-600 font-medium">Período: Enero 2024 - Jun 2024</span>
-        <Button icon="pi pi-chevron-right" text rounded size="small" />
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -58,6 +53,7 @@
             </div>
           </div>
         </div>
+
         <div class="bg-white rounded-xl shadow p-6">
           <h3 class="text-sm font-semibold text-gray-700 mb-4">Top 5 Habitaciones Más Rentadas</h3>
 
@@ -82,22 +78,41 @@
 </template>
 
 <script setup>
-import Button from "primevue/button";
+import { ref, onMounted, computed } from 'vue'
+import Button from 'primevue/button'
+import api from '@/services/api'
+import { useAuthStore } from '@/stores/authStore'
 
-const bars = [
-  { mes: "Ene", label: "$12,000", heightPx: "72px" },
-  { mes: "Feb", label: "$15,500", heightPx: "93px" },
-  { mes: "Mar", label: "$9,800", heightPx: "59px" },
-  { mes: "Abr", label: "$11,200", heightPx: "67px" },
-  { mes: "May", label: "$17,200", heightPx: "103px" },
-  { mes: "Jun", label: "$14,300", heightPx: "86px" },
-];
+const authStore = useAuthStore()
 
-const habitaciones = [
-  { nombre: "Suite Deluxe", reservas: 32, porcentaje: "100%" },
-  { nombre: "Habitación 203", reservas: 28, porcentaje: "87%" },
-  { nombre: "Habitación 305", reservas: 25, porcentaje: "78%" },
-  { nombre: "Villa Premium", reservas: 21, porcentaje: "65%" },
-  { nombre: "Habitación 102", reservas: 19, porcentaje: "59%" },
-];
+const ingresosTotales = ref(0)
+const reservasTotales = ref(0)
+const ingresosMensuales = ref([])
+const habitaciones = ref([])
+
+const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
+
+const bars = computed(() => {
+  const maxTotal = Math.max(...ingresosMensuales.value.map(m => m.total), 1)
+  return ingresosMensuales.value.map(m => ({
+    mes: meses[m.mes - 1],
+    label: '$' + Number(m.total).toLocaleString(),
+    heightPx: Math.round((m.total / maxTotal) * 140) + 'px'
+  }))
+})
+
+async function cargarEstadisticas() {
+  try {
+    const response = await api.get(`/admin/estadisticas?hotel=${authStore.hotelId}`)
+    const data = response.data.data
+    ingresosTotales.value = data.ingresos_totales
+    reservasTotales.value = data.reservas_totales
+    ingresosMensuales.value = data.ingresos_mensuales
+    habitaciones.value = data.top_habitaciones
+  } catch (error) {
+    console.error('Error al cargar estadísticas', error)
+  }
+}
+
+onMounted(() => cargarEstadisticas())
 </script>
