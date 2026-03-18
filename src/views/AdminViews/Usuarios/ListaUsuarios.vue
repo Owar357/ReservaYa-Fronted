@@ -1,8 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
-    <!-- Tabla de usuarios -->
     <div class="bg-white rounded-2xl shadow-md p-6 max-w-4xl mx-auto">
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center justify-between mb-4">
         <h2 class="text-xl font-bold text-gray-800 tracking-wide">Lista de Usuarios</h2>
         <button
           @click="abrirModalAgregar"
@@ -10,6 +9,20 @@
         >
           + agregar
         </button>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-semibold text-gray-700 mb-1">Hotel:</label>
+        <select
+          v-model="hotelSeleccionado"
+          @change="cargarUsuarios"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400"
+        >
+          <option value="">Selecciona un hotel</option>
+          <option v-for="hotel in hoteles" :key="hotel.id" :value="hotel.id">
+            {{ hotel.nombre }}
+          </option>
+        </select>
       </div>
 
       <table class="w-full text-sm">
@@ -32,7 +45,7 @@
             <td class="py-3 px-4">
               <span
                 :class="
-                  usuario.rol === 'Gerente' ? 'bg-blue-900 text-white' : 'bg-yellow-400 text-white'
+                  usuario.rol === 'GERENTE' ? 'bg-blue-900 text-white' : 'bg-yellow-400 text-white'
                 "
                 class="px-3 py-1 rounded-full text-xs font-bold"
               >
@@ -72,7 +85,11 @@
         >
           <i class="pi pi-times"></i>
         </button>
-        <AgregarUsuario @cancelar="cerrarModalAgregar" @registrado="onUsuarioRegistrado" />
+        <AgregarUsuario
+          :hotelId="hotelSeleccionado"
+          @cancelar="cerrarModalAgregar"
+          @registrado="onUsuarioRegistrado"
+        />
       </div>
     </div>
 
@@ -99,48 +116,68 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Swal from "sweetalert2";
 import AgregarUsuario from "./AgregarUsuario.vue";
-import EditarUsuario from "./EditarUsuario.vue";
+import EditarUsuario from "../Usuarios/EditarUsuario.vue";
+import api from "@/services/api";
+import { useAuthStore } from "@/stores/authStore";
 
-const usuarios = ref([
-  {
-    id: 1,
-    nombre: "Juan Gonzalo",
-    correo: "juan@go.com",
-    rol: "Recepcionista",
-    telefono: "7777-1111",
-  },
-  {
-    id: 2,
-    nombre: "Carlos Miranda",
-    correo: "Carlos.mir@anda.com",
-    rol: "Gerente",
-    telefono: "7777-2222",
-  },
-  {
-    id: 4,
-    nombre: "marta duran",
-    correo: "martajuli@gmil.com",
-    rol: "Recepcionista",
-    telefono: "7777-4444",
-  },
-]);
-
+const authStore = useAuthStore();
+const usuarios = ref([]);
+const hoteles = ref([]);
+const hotelSeleccionado = ref(authStore.hotelId);
+const cargando = ref(false);
 const mostrarModalAgregar = ref(false);
 const mostrarModalEditar = ref(false);
 const usuarioSeleccionado = ref(null);
 
+async function cargarHoteles() {
+  try {
+    const response = await api.get("/admin/hoteles");
+    hoteles.value = response.data.data;
+  } catch (error) {
+    Swal.fire("Error", "No se pudo cargar la lista de hoteles", "error");
+  }
+}
+
+async function cargarUsuarios() {
+  if (!hotelSeleccionado.value) return;
+  cargando.value = true;
+  try {
+    const response = await api.get(`/admin/hotelusuarios?hotel=${hotelSeleccionado.value}`);
+    usuarios.value = response.data.data.map((staff) => ({
+      id: staff.id,
+      nombre: staff.user.name,
+      correo: staff.user.email ?? "—",
+      rol: staff.rol,
+      estado: staff.estado,
+    }));
+  } catch (error) {
+    Swal.fire("Error", "No se pudo cargar la lista de usuarios", "error");
+  } finally {
+    cargando.value = false;
+  }
+}
+
+onMounted(async () => {
+  await cargarHoteles();
+  await cargarUsuarios();
+});
+
 function abrirModalAgregar() {
+  if (!hotelSeleccionado.value) {
+    Swal.fire("Atención", "Selecciona un hotel primero.", "warning");
+    return;
+  }
   mostrarModalAgregar.value = true;
 }
 function cerrarModalAgregar() {
   mostrarModalAgregar.value = false;
 }
-function onUsuarioRegistrado(nuevoUsuario) {
-  usuarios.value.push({ id: Date.now(), ...nuevoUsuario });
+function onUsuarioRegistrado() {
   cerrarModalAgregar();
+  cargarUsuarios();
 }
 
 function abrirModalEditar(usuario) {
@@ -161,26 +198,31 @@ function onUsuarioActualizado(datosActualizados) {
 
 async function confirmarEliminar(usuario) {
   const result = await Swal.fire({
-    title: "¿Eliminar usuario?",
-    text: `¿Estás seguro de eliminar a "${usuario.nombre}"? Esta acción no se puede deshacer.`,
+    title: "¿Desactivar usuario?",
+    text: `¿Estás seguro de desactivar a "${usuario.nombre}"?`,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#e53e3e",
     cancelButtonColor: "#083b7e",
-    confirmButtonText: "Sí, eliminar",
+    confirmButtonText: "Sí, desactivar",
     cancelButtonText: "Cancelar",
   });
 
   if (result.isConfirmed) {
-    usuarios.value = usuarios.value.filter((u) => u.id !== usuario.id);
-    Swal.fire({
-      icon: "success",
-      title: "Eliminado",
-      text: "El usuario fue eliminado correctamente.",
-      confirmButtonColor: "#083b7e",
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    try {
+      await api.delete(`/admin/hotelusuarios/${usuario.id}`);
+      await cargarUsuarios();
+      Swal.fire({
+        icon: "success",
+        title: "Desactivado",
+        text: "El usuario fue desactivado.",
+        confirmButtonColor: "#083b7e",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      Swal.fire("Error", "No se pudo desactivar el usuario", "error");
+    }
   }
 }
 </script>

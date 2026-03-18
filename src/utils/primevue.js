@@ -17,6 +17,7 @@ import Ripple from 'primevue/ripple';
 import Calendar from 'primevue/calendar'
 import Sidebar from 'primevue/sidebar';
 import StyleClass from 'primevue/styleclass'
+import Dropdown from 'primevue/dropdown';
 
 
 export default function setupPrimeVue(app){
@@ -41,5 +42,6 @@ export default function setupPrimeVue(app){
     app.component('Calendar', Calendar) 
     app.component('Sidebar', Sidebar)
     app.directive('styleclass', StyleClass)
+    app.component('Dropdown', Dropdown)
     
 }

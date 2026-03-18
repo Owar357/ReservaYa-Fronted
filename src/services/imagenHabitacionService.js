@@ -17,7 +17,7 @@ const imagenHabitacionService = {
   return api.post('/admin/imagenesHabitacion', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   })
-},
+},  
 
   deleteImagen(id) {
     return api.delete(`/admin/imagenesHabitacion/${id}`)

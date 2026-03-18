@@ -1,14 +1,9 @@
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
-import Login from '@/views/AuthViews/Login.vue';
-import Register from '@/views/AuthViews/Register.vue';
-import HomeView from '@/views/HomeView.vue';
-import { createRouter, createWebHistory } from 'vue-router'
-import ListaUsuarios from '../views/VistaAdmin/ListaUsuarios.vue';
-import AgregarUsuario from '@/views/VistaAdmin/AgregarUsuario.vue';
-import EditarUsuario from '@/views/VistaAdmin/EditarUsuario.vue';
-import { useAuthStore } from '@/stores/authStore';
-
-
+import AdminEstadisticas from "@/views/AdminEstadisticas.vue";
+import Login from "@/views/AuthViews/Login.vue";
+import Register from "@/views/AuthViews/Register.vue";
+import HomeView from "@/views/HomeView.vue";
+import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "@/stores/authStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,7 +25,11 @@ const router = createRouter({
       component: Register,
     },
 
- 
+    {
+      path: "/habitacionesHotel/:id",
+      name: "habitacionesHotel",
+      component: () => import("../views/UserViews/UsuarioHabitacionHotel.vue"),
+    },
 
     {
       path: "/",
@@ -45,12 +44,6 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
-    },
-
-    {
-      path: "/habitacionesHotel/:id",
-      name: "habitaciones",
-      component: UsuarioHabitacionHotel,
     },
 
     {
@@ -81,7 +74,7 @@ const router = createRouter({
           name: "usuarios",
           component: () => import("../views/AdminViews/Usuarios/ListaUsuarios.vue"),
         },
-          {
+        {
           path: "hoteles",
           name: "hoteles",
           component: () => import("../views/AdminViews/Hoteles/AdmiCrudHoteles.vue"),
@@ -89,7 +82,12 @@ const router = createRouter({
         {
           path: "habitaciones",
           name: "habitaciones",
-          component: () => import("../views/AdminViews/Habitaciones/ListaHabitaciones.vue")
+          component: () => import("../views/AdminViews/Habitaciones/ListaHabitaciones.vue"),
+        },
+        {
+          path: "reportes",
+          name: "reportes",
+          component: () => import("../views/AdminViews/ReporteOrdenes.vue"),
         },
         // agregar las demás rutas hijas  aquí igual
       ],
@@ -98,10 +96,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/login'
+    return "/login";
   }
-})
+});
 
-export default router
+export default router;
