@@ -1,5 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/authStore';
+import { useAuthStore } from '@/stores/authStore'
+import Login from '@/views/AuthViews/Login.vue';
+import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
+import Register from '@/views/AuthViews/Register.vue';
+import HomeView from '@/views/HomeView.vue';
+import UsuarioHabitacionHotel from '@/views/UserViews/UsuarioHabitacionHotel.vue';
 
 
 
@@ -24,7 +29,6 @@ const router = createRouter({
     },
 
 
-
     {
       path: "/",
       name: "home",
@@ -45,6 +49,7 @@ const router = createRouter({
       name: "habitaciones",
       component: UsuarioHabitacionHotel,
     },
+   
 
     {
       path: "/pago-exitoso",
@@ -59,10 +64,10 @@ const router = createRouter({
 
     {
       path: "/mis-reservas",
-      name: "reserva",
+      name: "reservas",
       component: () => import("../views/UserViews/MisReservas.vue"),
     },
-
+   
     //HomeAdmin
     {
       path: "/admin",
@@ -79,6 +84,12 @@ const router = createRouter({
           name: "hoteles",
           component: () => import("../views/AdminViews/Hoteles/AdmiCrudHoteles.vue"),
         },
+        {
+       path: "reserva",        
+        name: "reservados-admi",
+        component: () => import("../views/AdminViews/Reserva/AdmiReservaUsuario.vue"),
+        },
+       
         // agregar las demás rutas hijas  aquí igual
       ],
     },
