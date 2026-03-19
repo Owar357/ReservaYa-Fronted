@@ -60,7 +60,6 @@ export const useHotelStore = defineStore("hotel", {
         if (index !== -1) this.hoteles[index] = data.data;
         return { success: true };
       } catch (error) {
-        console.log("Error completo:", error.response?.data);
         this.error = error.response?.data?.message || "Error al actualizar hotel";
         return { success: false, message: this.error };
       } finally {
@@ -82,5 +81,19 @@ export const useHotelStore = defineStore("hotel", {
         this.loading = false;
       }
     },
+  },
+
+  async storeImagenes(habitacion_id, imagenes) {
+    this.loading = true;
+    this.error = null;
+    try {
+      const { data } = await imagenHabitacionService.storeImagenes(habitacion_id, imagenes);
+      return { success: true, data: data.data };
+    } catch (error) {
+      this.error = error.response?.data?.message || "Error al agregar imágenes";
+      return { success: false, message: this.error };
+    } finally {
+      this.loading = false;
+    }
   },
 });

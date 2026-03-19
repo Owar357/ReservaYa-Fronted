@@ -1,15 +1,16 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#5bc8d8] px-4">
+  <div class="min-h-screen flex items-center justify-center bg-[#2a9db0] px-4">
     <div class="flex rounded-2xl overflow-hidden shadow-2xl bg-white" style="width: 700px; max-width: 95vw; min-height: 460px;">
 
-      <!-- IMAGEN (lado izquierdo) -->
-      <div class="hidden md:block" style="width: 45%;">
+      
+     <div class="hidden md:block" style="width: 45%">
         <img
-          src="https://imgs.search.brave.com/dorzZFV7ZF93QFJ2wnMMpQgpZrOrofxw6j57IOE43ms/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9xLXh4/LmJzdGF0aWMuY29t/L3hkYXRhL2ltYWdl/cy9ob3RlbC9tYXg2/MDAvMzYyMDMyMTEw/LmpwZz9rPWRhOGM2/MTVlMTU3ZTJlOTRj/ZWU1ZDdiYWFlNTNh/ZDgzNDA3MzQ1OTY1/MGYxNjU2ZTViYTNk/MzlmMzJjMTVhMWEm/bz0mYT0xMzExMTE5"
+          src="https://images.unsplash.com/photo-1535827841776-24afc1e255ac?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt="Hotel"
           class="w-full h-full object-cover block"
         />
       </div>
+
 
       <!-- FORMULARIO (lado derecho) -->
       <div class="flex-1 flex flex-col justify-center px-10 py-12">
@@ -72,7 +73,7 @@
 
         <p class="mt-6 text-center text-sm text-gray-600">
           ¿Ya tienes cuenta?
-          <router-link to="/" class="text-cyan-600 hover:underline font-medium">
+          <router-link to="/login" class="text-cyan-600 hover:underline font-medium">
             Inicia sesión
           </router-link>
         </p>

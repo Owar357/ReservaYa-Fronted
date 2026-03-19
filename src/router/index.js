@@ -1,10 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/authStore'
 import Login from '@/views/AuthViews/Login.vue';
-import AdminEstadisticas from '@/views/AdminEstadisticas.vue';
 import Register from '@/views/AuthViews/Register.vue';
 import HomeView from '@/views/HomeView.vue';
-import UsuarioHabitacionHotel from '@/views/UserViews/UsuarioHabitacionHotel.vue';
+
 
 
 
@@ -16,11 +15,7 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
-    {
-      path: "/AdminEstadisticas",
-      name: "AdminEstadisticas",
-      component: AdminEstadisticas,
-    },
+ 
 
     {
       path: "/register",
@@ -28,6 +23,11 @@ const router = createRouter({
       component: Register,
     },
 
+    {
+      path: "/habitacionesHotel/:id",
+      name: "habitacionesHotel",
+      component: () => import("../views/UserViews/UsuarioHabitacionHotel.vue"),
+    },
 
     {
       path: "/",
@@ -43,13 +43,6 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue"),
     },
-
-    {
-      path: "/habitacionesHotel/:id",
-      name: "habitaciones",
-      component: UsuarioHabitacionHotel,
-    },
-   
 
     {
       path: "/pago-exitoso",
@@ -74,33 +67,46 @@ const router = createRouter({
       name: "admin",
       component: () => import("../views/AdminViews/HomeAdmin.vue"),
       children: [
+         {
+          path: "estadistiscas",
+          name: "estadisticas",
+          component: () => import("../views/AdminViews/AdminEstadisticas.vue"),
+        },
         {
           path: "usuarios",
           name: "usuarios",
           component: () => import("../views/AdminViews/Usuarios/ListaUsuarios.vue"),
         },
-          {
+        {
           path: "hoteles",
           name: "hoteles",
           component: () => import("../views/AdminViews/Hoteles/AdmiCrudHoteles.vue"),
         },
         {
-       path: "reserva",        
-        name: "reservados-admi",
-        component: () => import("../views/AdminViews/Reserva/AdmiReservaUsuario.vue"),
+          path: "habitaciones",
+          name: "habitaciones",
+          component: () => import("../views/AdminViews/Habitaciones/ListaHabitaciones.vue"),
         },
-       
-        // agregar las demás rutas hijas  aquí igual
+        {
+          path: "reservas",
+          name: "reservas",
+          component: () => import("../views/AdminViews/Reserva/AdmiReservaUsuario.vue"),
+        },
+        {
+          path: "reportes",
+          name: "reportes",
+          component: () => import("../views/AdminViews/ReporteOrdenes.vue"),
+        },
       ],
     },
   ],
 });
 
 router.beforeEach((to, from) => {
-  const authStore = useAuthStore()
+  const authStore = useAuthStore();
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return '/login'
+    return "/login";
   }
-})
+});
 
-export default router
+export default router;

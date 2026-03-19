@@ -1,174 +1,226 @@
-
-
 <template>
-  <div class="lista-reservas">
-    <div class="card">
+  <div class="p-6 min-h-screen bg-gray-50">
 
-      <div class="header">
-        <h2 class="titulo">Lista de Reservas</h2>
-      </div>
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <h1 class="text-3xl font-bold text-gray-800">Lista de Reservas</h1>
+    </div>
 
-      <table class="tabla">
-        <thead>
+    <!-- Loading -->
+    <div v-if="reservaStore.loading" class="flex justify-center items-center h-48">
+      <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
+    </div>
+
+    <!-- Tabla -->
+    <div v-else class="bg-white rounded-2xl shadow-md overflow-hidden">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-100 text-gray-500 text-left">
           <tr>
-            <th>Usuario</th>
-            <th>Hotel</th>
-            <th>Fecha Inicio</th>
-            <th>Fecha Fin</th>
-            <th></th>
+            <th class="py-3 px-6">Usuario</th>
+            <th class="py-3 px-6">Fecha Entrada</th>
+            <th class="py-3 px-6">Fecha Salida</th>
+            <th class="py-3 px-6">Estado</th>
+            <th class="py-3 px-6 text-right">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="res in reservas" :key="res.id">
-            <td>{{ res.usuario }}</td>
-            <td>{{ res.hotel }}</td>
-            <td>{{ res.fechaInicio }}</td>
-            <td>{{ res.fechaFin }}</td>
-            <td class="acciones">
-              <button class="btn-icono btn-confirmar" @click="confirmarReserva(res)" title="Confirmar">
-                <i class="pi pi-check"></i>
-              </button>
-              <button class="btn-icono btn-eliminar" @click="confirmarEliminar(res.usuario)" title="Eliminar">
-                <i class="pi pi-trash"></i>
-              </button>
+          <tr v-if="!reservaStore.reservas?.length">
+            <td colspan="5" class="text-center py-20 text-gray-400">
+              <i class="pi pi-inbox text-5xl mb-4 block"></i>
+              <p class="text-lg">No hay reservas</p>
+            </td>
+          </tr>
+          <tr
+            v-for="res in reservaStore.reservas"
+            :key="res.id"
+            class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+          >
+            <td class="py-4 px-6 font-medium text-gray-800">{{ res.user.name }}</td>
+            <td class="py-4 px-6 text-gray-600">
+              <i class="pi pi-calendar text-gray-400 text-xs mr-1"></i>{{ res.fecha_entrada }}
+            </td>
+            <td class="py-4 px-6 text-gray-600">
+              <i class="pi pi-calendar text-gray-400 text-xs mr-1"></i>{{ res.fecha_salida }}
+            </td>
+            <td class="py-4 px-6">
+              <span :class="{
+                'bg-yellow-100 text-yellow-700': res.estado === 'EN_PROCESO',
+                'bg-green-100 text-green-700': res.estado === 'FINALIZADA',
+                'bg-red-100 text-red-700': res.estado === 'CANCELADA',
+              }" class="text-xs font-bold px-2 py-1 rounded-full">
+                {{ res.estado }}
+              </span>
+            </td>
+            <td class="py-4 px-6">
+              <div class="flex gap-2 justify-end">
+                <!-- Ver detalles — siempre visible -->
+                <button @click="verDetalles(res)"
+                  class="w-9 h-9 rounded-lg border border-blue-300 text-blue-500 hover:bg-blue-50 flex items-center justify-center"
+                  title="Ver detalles">
+                  <i class="pi pi-eye"></i>
+                </button>
+
+                <!-- Finalizar — solo si está EN_PROCESO -->
+                <button
+                  v-if="res.estado === 'EN_PROCESO'"
+                  @click="confirmarReserva(res)"
+                  class="w-9 h-9 rounded-lg border border-green-300 text-green-600 hover:bg-green-50 flex items-center justify-center"
+                  title="Finalizar">
+                  <i class="pi pi-check"></i>
+                </button>
+                <button
+                  v-else
+                  disabled
+                  class="w-9 h-9 rounded-lg border border-gray-200 text-gray-300 flex items-center justify-center cursor-not-allowed"
+                  title="No disponible">
+                  <i class="pi pi-check"></i>
+                </button>
+
+                <!-- Cancelar — solo si está EN_PROCESO -->
+                <button
+                  v-if="res.estado === 'EN_PROCESO'"
+                  @click="confirmarEliminar(res)"
+                  class="w-9 h-9 rounded-lg border border-red-300 text-red-500 hover:bg-red-50 flex items-center justify-center"
+                  title="Cancelar">
+                  <i class="pi pi-trash"></i>
+                </button>
+                <button
+                  v-else
+                  disabled
+                  class="w-9 h-9 rounded-lg border border-gray-200 text-gray-300 flex items-center justify-center cursor-not-allowed"
+                  title="No disponible">
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
-
     </div>
+
+    <!-- Dialog Detalles -->
+    <Dialog v-model:visible="showDetalles" header="Detalle de Reserva" :style="{ width: '420px' }" modal :draggable="false">
+      <div v-if="reservaSeleccionada" class="flex flex-col gap-4 py-2">
+
+        <!-- Info usuario -->
+        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+          <div class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center text-white font-bold">
+            {{ reservaSeleccionada.user.name.charAt(0).toUpperCase() }}
+          </div>
+          <div>
+            <p class="font-bold text-gray-800">{{ reservaSeleccionada.user.name }}</p>
+            <p class="text-xs text-gray-400">
+              {{ reservaSeleccionada.fecha_entrada }} → {{ reservaSeleccionada.fecha_salida }}
+            </p>
+          </div>
+          <span :class="{
+            'bg-yellow-100 text-yellow-700': reservaSeleccionada.estado === 'EN_PROCESO',
+            'bg-green-100 text-green-700': reservaSeleccionada.estado === 'FINALIZADA',
+            'bg-red-100 text-red-700': reservaSeleccionada.estado === 'CANCELADA',
+          }" class="ml-auto text-xs font-bold px-2 py-1 rounded-full">
+            {{ reservaSeleccionada.estado }}
+          </span>
+        </div>
+
+        <!-- Total -->
+        <div class="flex items-center justify-between px-3 py-2 bg-slate-50 rounded-lg">
+          <span class="text-sm text-gray-500">Total</span>
+          <span class="font-bold text-gray-800">${{ reservaSeleccionada.total_precio }}</span>
+        </div>
+
+        <!-- Habitaciones -->
+        <div
+          v-for="(detalle, index) in reservaSeleccionada.detalles"
+          :key="index"
+          class="flex items-center justify-between p-3 border border-gray-200 rounded-lg"
+        >
+          <div class="flex items-center gap-2">
+            <i class="pi pi-home text-gray-400"></i>
+            <div>
+              <p class="text-gray-700 font-medium">{{ detalle.habitacion.nombre }}</p>
+              <p class="text-xs text-gray-400">{{ detalle.habitacion.hotel.nombre }}</p>
+            </div>
+          </div>
+          <span class="text-sm font-bold text-gray-700">${{ detalle.precio }}</span>
+        </div>
+
+      </div>
+      <template #footer>
+        <Button label="Cerrar" icon="pi pi-times" @click="showDetalles = false"
+          class="!bg-slate-900 !border-slate-900 !font-bold" />
+      </template>
+    </Dialog>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import Swal from 'sweetalert2'
+import { useReservaStore } from '@/stores/reservaAdminStore'
 
-const reservas = ref([
-  { usuario:'Carlos Méndez',hotel: 'Hotel Gran Villa', fechaInicio: '2025-06-01', fechaFin: '2025-06-05' },
-  { usuario:'Ana Torres', hotel: 'Hotel La Vista',  fechaInicio: '2025-07-10', fechaFin: '2025-07-15' },
-  { usuario: 'Luis Ramírez', hotel: 'Hotel Vistamonte',fechaInicio: '2025-08-20', fechaFin: '2025-08-25' },
-  { usuario:'María González',hotel: 'Hotel del Mar',  fechaInicio:'2025-09-03', fechaFin: '2025-09-07' },
-])
+const Toast = Swal.mixin({
+  toast: true,
+  position: 'top-end',
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+})
+
+const reservaStore = useReservaStore()
+const showDetalles = ref(false)
+const reservaSeleccionada = ref(null)
+
+onMounted(() => {
+  reservaStore.fetchReservas()
+})
+
+function verDetalles(res) {
+  reservaSeleccionada.value = res
+  showDetalles.value = true
+}
 
 function confirmarReserva(res) {
   Swal.fire({
-    title: 'Confirmar reserva',
-    text: `¿Confirmas la reserva de "${res.usuario}"?`,
+    title: '¿Finalizar reserva?',
+    text: `¿Confirmas finalizar la reserva de "${res.user.name}"?`,
     icon: 'question',
     showCancelButton: true,
-    confirmButtonText: 'Sí, confirmar',
+    confirmButtonText: 'Sí, finalizar',
     cancelButtonText: 'Cancelar',
-    reverseButtons: true,
-    confirmButtonColor: '#2d6472',
-    cancelButtonColor: '#888',
-  }).then((result) => {
+    confirmButtonColor: '#0f172a',
+    cancelButtonColor: '#94a3b8',
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      Swal.fire({
-        title: '¡Confirmada!',
-        text: 'La reserva ha sido confirmada correctamente.',
-        icon: 'success',
-        confirmButtonColor: '#EF9F27',
-      })
+      const r = await reservaStore.updateEstado(res.id, 'FINALIZADA')
+      if (r.success) {
+        Toast.fire({ icon: 'success', title: 'Reserva finalizada correctamente' })
+      } else {
+        Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
+      }
     }
   })
 }
 
-function confirmarEliminar(usuario) {
+function confirmarEliminar(res) {
   Swal.fire({
-    title: 'Eliminar reserva',
-    text: `¿Estás seguro de eliminar la reserva de "${usuario}"?`,
+    title: '¿Cancelar reserva?',
+    text: `¿Estás seguro de cancelar la reserva de "${res.user.name}"?`,
     icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: 'Sí, eliminar',
-    cancelButtonText: 'No, cancelar',
-    reverseButtons: true,
-    confirmButtonColor: '#A32D2D',
-    cancelButtonColor: '#888',
-  }).then((result) => {
+    confirmButtonText: 'Sí, cancelar',
+    cancelButtonText: 'Atrás',
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#94a3b8',
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      Swal.fire({
-        title: '¡Eliminada!',
-        text: 'La reserva ha sido eliminada correctamente.',
-        icon: 'success',
-        confirmButtonColor: '#EF9F27',
-      })
-    } else if (result.dismiss === Swal.DismissReason.cancel) {
-      Swal.fire({
-        title: 'Cancelado',
-        text: 'La reserva está a salvo :)',
-        icon: 'error',
-        confirmButtonColor: '#888',
-      })
+      const r = await reservaStore.updateEstado(res.id, 'CANCELADA')
+      if (r.success) {
+        Toast.fire({ icon: 'success', title: 'Reserva cancelada correctamente' })
+      } else {
+        Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
+      }
     }
   })
 }
 </script>
-
-<style scoped>
-.lista-reservas {
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 2rem;
-  background: #f0f0f0;
-  display: flex;
-  justify-content: center;
-}
-.card {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
-  padding: 2rem;
-  width: 100%;
-  max-width: 900px;
-}
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-}
-.titulo {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0;
-}
-.tabla {
-  width: 100%;
-  border-collapse: collapse;
-}
-.tabla thead th {
-  text-align: left;
-  font-size: 14px;
-  font-weight: 700;
-  border-bottom: 1px solid #c5c3c3;
-  padding: 0.5rem 0.75rem;
-}
-.tabla tbody tr {
-  border-bottom: 1px solid #d3cfcf;
-}
-.tabla tbody td {
-  padding: 0.85rem 0.75rem;
-  font-size: 14px;
-  vertical-align: middle;
-}
-.acciones {
-  display: flex;
-  gap: 6px;
-  justify-content: flex-end;
-}
-.btn-icono {
-  width: 44px;
-  height: 44px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 15px;
-  background: transparent;
-}
-.btn-confirmar { color: #1a7a3a; border: 1px solid #8fd4a8; }
-.btn-confirmar:hover { background: #e6f7ec; }
-.btn-eliminar { color: #A32D2D; border: 1px solid #F09595; }
-.btn-eliminar:hover { background: #FCEBEB; }
-</style>

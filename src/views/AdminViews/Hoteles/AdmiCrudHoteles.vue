@@ -13,14 +13,14 @@
       <i class="pi pi-spin pi-spinner text-4xl text-gray-400"></i>
     </div>
 
-    <!-- Error -->
-    <div v-else-if="hotelStore.error" class="text-center text-red-500 py-10">
-      <i class="pi pi-exclamation-triangle mr-2"></i> {{ hotelStore.error }}
+    <!-- Sin hoteles -->
+    <div v-else-if="hotelStore.hoteles.length === 0" class="text-center text-gray-400 py-20">
+      <i class="pi pi-building text-5xl mb-4 block"></i>
+      <p class="text-lg">No tienes hoteles registrados</p>
     </div>
 
     <!-- Grid -->
-    <div v-else-if="hotelStore.hoteles.length > 0"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <div v-for="hotel in hotelStore.hoteles" :key="hotel.id"
         class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
         <img :src="hotel.imagen || defaultImage" :alt="hotel.nombre" class="w-full h-48 object-cover" />
@@ -45,18 +45,11 @@
       </div>
     </div>
 
-    <!-- Sin hoteles -->
-    <div v-else class="text-center text-gray-400 py-20">
-      <i class="pi pi-building text-5xl mb-4 block"></i>
-      <p class="text-lg">No tienes hoteles registrados</p>
-    </div>
-
     <!-- Dialog -->
     <Dialog v-model:visible="showModal" :header="editingHotel ? 'Editar Hotel' : 'Añadir Hotel'"
       :style="{ width: '480px' }" modal :draggable="false">
       <div class="flex flex-col gap-4 py-2">
 
-        <!-- Nombre siempre visible -->
         <div class="flex flex-col gap-1">
           <label class="text-sm font-semibold text-gray-700">
             <i class="pi pi-home mr-1"></i> Nombre del Hotel
@@ -64,7 +57,6 @@
           <InputText v-model="form.nombre" placeholder="Hotel Villanueva" class="w-full" />
         </div>
 
-        <!-- Solo visible al crear -->
         <template v-if="!editingHotel">
           <div class="flex flex-col gap-1">
             <label class="text-sm font-semibold text-gray-700">
@@ -101,7 +93,6 @@
           </div>
         </template>
 
-        <!-- Teléfonos siempre visibles -->
         <div class="flex flex-col gap-1">
           <label class="text-sm font-semibold text-gray-700">
             <i class="pi pi-phone mr-1"></i> Teléfono
@@ -123,7 +114,6 @@
           <InputText v-model="form.telefono3" placeholder="7777-7777" class="w-full" />
         </div>
 
-        <!-- Imagen siempre visible -->
         <div class="flex flex-col gap-1">
           <label class="text-sm font-semibold text-gray-700">
             <i class="pi pi-image mr-1"></i> Imagen del Hotel
@@ -147,21 +137,16 @@
           </div>
         </div>
 
-
-
-
-
-
-
       </div>
 
       <template #footer>
         <Button label="Cancelar" icon="pi pi-times" @click="closeModal"
           class="!bg-gray-200 !border-gray-200 !text-gray-700 !font-bold" />
-
-        <Button :label="hotelStore.loading ? 'Guardando...' : (editingHotel ? 'Guardar Cambios' : 'Añadir Hotel')"
+        <Button
+          :label="hotelStore.loading ? 'Guardando...' : (editingHotel ? 'Guardar Cambios' : 'Añadir Hotel')"
           :icon="hotelStore.loading ? 'pi pi-spin pi-spinner' : (editingHotel ? 'pi pi-check' : 'pi pi-plus')"
-          @click="editingHotel ? saveHotel() : createHotel()" :disabled="editingHotel
+          @click="editingHotel ? saveHotel() : createHotel()"
+          :disabled="editingHotel
             ? (!form.nombre || hotelStore.loading)
             : (!form.nombre || !form.direccion || !form.departamento || !form.email || !form.telefono || hotelStore.loading)"
           class="!bg-slate-900 !border-slate-900 !font-bold" />
@@ -198,18 +183,19 @@ export default {
       imagenFile: null,
       previewImagen: '',
       form: {
-        nombre: '',
-        direccion: '',
-        departamento: '',
-        descripcion: '',
-        email: '',
-        telefono: '',
-        telefono2: '',
-        telefono3: '',
+        nombre: '', direccion: '', departamento: '',
+        descripcion: '', email: '', telefono: '',
+        telefono2: '', telefono3: '',
         fecha_asignacion: new Date().toISOString().split('T')[0]
       },
       defaultImage: 'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=400&q=80',
       departamentos: ['Ahuachapán', 'Cabañas', 'Chalatenango', 'Cuscatlán', 'La Libertad', 'La Paz', 'La Unión', 'Morazán', 'San Miguel', 'San Salvador', 'San Vicente', 'Santa Ana', 'Sonsonate', 'Usulután']
+    }
+  },
+
+  watch: {
+    'hotelStore.error'(val) {
+      if (val) Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
     }
   },
 
@@ -267,7 +253,7 @@ export default {
       if (result.success) {
         Toast.fire({ icon: 'success', title: 'Hotel creado correctamente' })
       } else {
-        Toast.fire({ icon: 'error', title: result.message })
+        Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
       }
     },
 
@@ -277,7 +263,7 @@ export default {
       if (result.success) {
         Toast.fire({ icon: 'success', title: 'Hotel actualizado correctamente' })
       } else {
-        Toast.fire({ icon: 'error', title: result.message })
+        Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
       }
     },
 
@@ -296,7 +282,7 @@ export default {
           if (res.success) {
             Toast.fire({ icon: 'success', title: 'Hotel eliminado correctamente' })
           } else {
-            Toast.fire({ icon: 'error', title: res.message })
+            Toast.fire({ icon: 'error', title: 'Ocurrió un error inesperado' })
           }
         }
       })
