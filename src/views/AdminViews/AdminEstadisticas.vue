@@ -79,7 +79,6 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import Button from 'primevue/button'
 import api from '@/services/api'
 import { useAuthStore } from '@/stores/authStore'
 
